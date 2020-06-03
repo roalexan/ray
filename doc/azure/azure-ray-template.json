@@ -106,7 +106,7 @@
         }
     },
     "variables": {
-        "azureScriptInitUrl": "https://raw.githubusercontent.com/ray-project/ray/master/doc/azure/azure-init.sh",
+				"azureScriptInitUrl": "https://raw.githubusercontent.com/roalexan/ray/master/doc/azure/azure-init.sh",
         "vmName": "ray-node",
         "subnetWorkers": "10.32.0.0/16",
         "subnetHead": "10.33.0.0/16",
@@ -183,6 +183,19 @@
                             "sourcePortRange": "*",
                             "destinationAddressPrefix": "*",
                             "destinationPortRange": "6006"
+                        }
+                    },
+                    {
+                        "name": "FlaskApp",
+                        "properties": {
+                            "priority": 1004,
+                            "protocol": "TCP",
+                            "access": "[if(parameters('PublicWebUI'), 'Allow', 'Deny')]",
+                            "direction": "Inbound",
+                            "sourceAddressPrefix": "*",
+                            "sourcePortRange": "*",
+                            "destinationAddressPrefix": "*",
+                            "destinationPortRange": "5000"
                         }
                     }
                 ]
@@ -508,6 +521,11 @@
         "TensorBoard": {
             "type": "string",
             "value": "[concat('http://', reference(variables('publicIpAddressName')).ipAddress, ':6006')]",
+            "condition": "[parameters('PublicWebUI')]"
+        },
+        "FlaskApp": {
+            "type": "string",
+            "value": "[concat('http://', reference(variables('publicIpAddressName')).ipAddress, ':5000')]",
             "condition": "[parameters('PublicWebUI')]"
         }
     }
